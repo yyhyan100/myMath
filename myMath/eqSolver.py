@@ -1,4 +1,4 @@
-class eqSolver:
+class solver_1d:
     def __init__(self,tol=0.000001):
         self.tol=tol
 
