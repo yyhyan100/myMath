@@ -33,3 +33,8 @@ class solver_1d:
             xim1=xi
             xi=xi1
         return xi1
+
+class solver_nd:
+    def __init__(self,ndim=2,tol=0.000001):
+        self.ndim=ndim
+        self.tol=tol
