@@ -22,3 +22,12 @@ class solver_1d:
             err1=abs(f(xi1))
             xi=xi1
         return xi1
+    
+    def secant(self, f, xi, xim1):
+        err1=self.tol+1
+        while err1 > self.tol:
+            xi1=xi-f(xi)*(xi-xim1)/(f(xi)-f(xim1))
+            err1=abs(f(xi1))
+            xim1=xi
+            xi=xi1
+        return xi1
