@@ -23,7 +23,9 @@ class solver_1d:
             xi=xi1
         return xi1
     
-    def secant(self, f, xi, xim1):
+    def secant(self, f, p0=0.0,p1=0.1):
+        xim1=p0
+        xi=p1
         err1=self.tol+1
         while err1 > self.tol:
             xi1=xi-f(xi)*(xi-xim1)/(f(xi)-f(xim1))
