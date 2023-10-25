@@ -49,3 +49,32 @@ class intp_1d:
             (1+tmp[1]/tp1+tmp[1]/tp3)*tmp[0]*tmp[2]*y[1]/tp1/tp3-\
             tmp[0]*tmp[1]**2*y[2]/tp2/tp3**2+\
             tmp[0]*tmp[1]*tmp[2]*yp/tp1/tp3
+    
+    def spline(self, x, y, x_input):
+        n=len(x)
+        gpp=np.zeros(n-2,dtype=np.float64)
+        b=np.zeros(n-2,dtype=np.float64)
+        A=np.zeros((n-2,n-2),dtype=np.float64)
+        for i in range(1,n-1):
+            delta_i=x[i+1]-x[i]
+            delta_i1=x[i+2]-x[i+1]
+            A[i,i-1]=delta_i/6
+            A[i,i]=(delta_i+delta_i1)/3
+            A[i,i+1]=delta_i1/6
+            b[i]=(y[i+2]-y[i+1])/delta_i1-(y[i+1]-y[i])/delta_i
+
+        i=0
+        delta_i=x[i+1]-x[i]
+        delta_i1=x[i+2]-x[i+1]
+        A[i,i]=(delta_i+delta_i1)/3
+        A[i,i+1]=delta_i1/6
+        b[i]=(y[i+2]-y[i+1])/delta_i1-(y[i+1]-y[i])/delta_i
+
+        i=n-1
+        delta_i=x[i+1]-x[i]
+        delta_i1=x[i+2]-x[i+1]
+        A[i,i-1]=delta_i/6
+        A[i,i]=(delta_i+delta_i1)/3
+        b[i]=(y[i+2]-y[i+1])/delta_i1-(y[i+1]-y[i])/delta_i
+
+        gpp=np.matmul(np.linalg.inv(A),b.reshape(-1,0))
