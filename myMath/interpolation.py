@@ -1,21 +1,38 @@
 import numpy as np
+import numbers
 class intp_1d:
     def __init__(self):
         pass
 
     def Lagrange(self,x,y,x_input):
-        def _Li(x,x_input,i):
+        if isinstance(x_input,numbers.Number): 
+            intype_scalar=True
+        else:
+            intype_scalar=False
+        if not isinstance(x_input,np.ndarray): x_input=np.array([x_input])
+
+        def _Li(x,xin,i):
             n=len(x)
             ans1=1.0
             for j in range(n):
-                if j!=i: ans1= ans1*(x_input-x[j])/(x[i]-x[j])
+                if j!=i: ans1= ans1*(xin-x[j])/(x[i]-x[j])
             return ans1
-        y_output=0.0
-        for i in range(len(x)):
-            y_output += _Li(x,x_input,i)*y[i]
-        return y_output
+        nn=len(x_input)
+        y_output=np.zeros(nn,dtype=np.float64)
+        for j in range(nn):
+            for i in range(len(x)):
+                y_output[j] += _Li(x,x_input[j],i)*y[i]
+        if intype_scalar: 
+            return y_output[0]
+        else:
+            return y_output
 
     def NewtonDD(self,x,y,x_input):
+        if isinstance(x_input,numbers.Number): 
+            intype_scalar=True
+        else:
+            intype_scalar=False
+        if not isinstance(x_input,np.ndarray): x_input=np.array([x_input])
         n=len(x)
         D=np.empty((n,n),dtype=np.float64)
         D[:,0]=y
@@ -24,15 +41,20 @@ class intp_1d:
             for i in range(j,n):
                 D[i,j]=(D[i,j-1]-D[i-1,j-1])/(x[i]-x[i-j])
 
-        y_output=0.0
+        nn=len(x_input)
+        y_output=np.zeros(nn,dtype=np.float64)
+        for k in range(nn):
+            for i in range(1,n):
+                tmp=1.0
+                for j in range(i):
+                    tmp*=(x_input[k]-x[j])
+                y_output[k]+=D[i,i]*tmp
+            y_output[k]+=D[0,0]
 
-        for i in range(1,n):
-            tmp=1.0
-            for j in range(i):
-                tmp*=(x_input-x[j])
-            y_output+=D[i,i]*tmp
-        y_output+=D[0,0]
-        return y_output
+        if intype_scalar: 
+            return y_output[0]
+        else:
+            return y_output
     
     def Hermite_2pts(self,x,y,yp,x_input):
         tmp1=(x_input-x[0])/(x[1]-x[0])
@@ -51,6 +73,12 @@ class intp_1d:
             tmp[0]*tmp[1]*tmp[2]*yp/tp1/tp3
     
     def spline(self, x, y, x_input, bc=0):
+        if isinstance(x_input,numbers.Number): 
+            intype_scalar=True
+        else:
+            intype_scalar=False
+        if not isinstance(x_input,np.ndarray): x_input=np.array([x_input])
+
         n=len(x)
         gpp=np.zeros(n,dtype=np.float64)
         b=np.zeros(n-2,dtype=np.float64)
@@ -98,12 +126,21 @@ class intp_1d:
         else:
             gpp[0]=gpp[1]
             gpp[n-1]=gpp[n-2]
-        for i in range(1,n):
-            if x_input<=x[i]: break
-        i-=1
-        tmp1=x_input-x[i]
-        tmp2=x[i+1]-x_input
-        delta_i=x[i+1]-x[i]
-        return gpp[i]*(tmp2**3/delta_i-delta_i*tmp2)/6+\
-            gpp[i+1]*(tmp1**3/delta_i-delta_i*tmp1)/6+\
-            y[i]*tmp2/delta_i+y[i+1]*tmp1/delta_i
+
+        nn=len(x_input)
+        y_output=np.zeros(nn,dtype=np.float64)
+
+        for j in range(nn):
+            for i in range(1,n):
+                if x_input[j]<=x[i]: break
+            i-=1
+            tmp1=x_input[j]-x[i]
+            tmp2=x[i+1]-x_input[j]
+            delta_i=x[i+1]-x[i]
+            y_output[j]=gpp[i]*(tmp2**3/delta_i-delta_i*tmp2)/6+\
+                gpp[i+1]*(tmp1**3/delta_i-delta_i*tmp1)/6+\
+                y[i]*tmp2/delta_i+y[i+1]*tmp1/delta_i
+        if intype_scalar: 
+            return y_output[0]
+        else:
+            return y_output
