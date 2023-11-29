@@ -26,3 +26,14 @@ class composite:
         tmp=tmp1+tmp2+f(a)+f(b)
         tmp*=dx/3
         return tmp
+    
+    def romberg(self,f,a,b,n, order=2):
+        R=np.empty((order,order), np.float64)
+        for i in range(order):
+            R[i,0]=self.trapezoid(f,a,b,n*(2**i))
+        
+        for j in range(1,order):
+            for i in range(j,order):
+                tmp=4**j
+                R[i,j]=(tmp*R[i,j-1]-R[i-1,j-1])/(tmp-1)
+        return R[order-1,order-1]
