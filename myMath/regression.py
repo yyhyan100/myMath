@@ -52,7 +52,7 @@ class linear_regression_OLS:
             return np.matmul(X,self.w)
 
 class poly_regression:
-
+# plolynomilal regression, degree must be provided 
     def __init__(self,degree:int=1):
         self.degree=degree
         self.a=np.zeros(degree+1,dtype=np.float64)
