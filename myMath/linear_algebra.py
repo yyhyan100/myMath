@@ -23,5 +23,43 @@ class linear_system_solver:
             x[k]=(b[k]-tmp)/A[k,k]
         return x
 
+    def jacobi(self,coef_matrix,rhs,init_guess=0,tol=0.0001):
+        n=rhs.size
+        x_new=np.empty(n)
+        x_old=np.empty(n)
+        x_old[:]=init_guess
+        relative_error=np.empty(n)
+        relative_error[:]=tol+1
 
+        while np.max(relative_error)>=tol:
+            for i in range(n):
+                tmp=0.0
+                for j in range(n):
+                    if j !=i : tmp+=coef_matrix[i,j]*x_old[j]
+                x_new[i]=(rhs[i]-tmp)/coef_matrix[i,i]
+                if x_new[i]==0.0:
+                    relative_error[i]=0 
+                else:
+                    relative_error[i]=abs((x_new[i]-x_old[i])/x_new[i])
+            x_old[:]=x_new[:]
+        return x_new
+    
+    def gauss_seidel(self,coef_matrix,rhs,init_guess=0,tol=0.0001):
+        n=rhs.size
+        x=np.empty(n)
+        x[:]=init_guess
+        relative_error=np.empty(n)
+        relative_error[:]=tol+1
 
+        while np.max(relative_error)>=tol:
+            for i in range(n):
+                tmp=0.0
+                for j in range(n):
+                    if j !=i : tmp+=coef_matrix[i,j]*x[j]
+                tmp2=x[i]
+                x[i]=(rhs[i]-tmp)/coef_matrix[i,i]
+                if x[i]==0.0:
+                    relative_error[i]=0 
+                else:
+                    relative_error[i]=abs((x[i]-tmp2)/x[i])
+        return x
