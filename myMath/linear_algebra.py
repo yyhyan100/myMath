@@ -63,3 +63,24 @@ class linear_system_solver:
                 else:
                     relative_error[i]=abs((x[i]-tmp2)/x[i])
         return x
+
+        def LU(A):
+            n=A.shape[0] 
+            L=np.zeros((n,n),dtype=np.double)
+            U=L.copy()
+            for i in range(n): L[i,i]=1.0
+            U[0,:]=A[0,:]
+            L[1:,1]=A[1:,1]/U[1,1]
+            for k in range(1,n):
+                for j in range(k,n):
+                    tmp=0.0
+                    for p in range(k+1):
+                        tmp+=L[k,p]*U[p,j]
+                    U[k,j]=A[k,j]-tmp
+                for i in range(k+1,n):
+                    tmp=0.0
+                    for p in range(k+1):
+                        tmp+=L[i,p]*U[p,k]
+                    L[i,k]=(A[i,k]-tmp)/U[k,k]
+            return L,U
+
