@@ -88,7 +88,7 @@ class linear_system_solver:
     def LU_solver(self, A, b):
         L,U=self.LU(A)
         n=A.shape[0] 
-        
+
         y=np.zeros(n,dtype=np.double)
         y[0]=b[0]
         for i in range(1,n):
@@ -107,5 +107,21 @@ class linear_system_solver:
 
         return x
 
-
+    def Cholesky(self,A):
+        # A=U'U, used for decomposing a symmetric matrix A
+        n=A.shape[0] 
+        U=np.zeros((n,n),dtype=np.double)
+        U[0,0]=np.sqrt(A[0,0])
+        U[0,1:]=A[0,1:]/U[0,0]
+        for i in range(1,n): 
+            tmp=0.0 
+            for k in range(i):
+                tmp+=U[k,i]**2
+            U[i,i]=np.sqrt(A[i,i]-tmp)
+            for j in range(i+1,n):
+                tmp=0.0 
+                for k in range(i):
+                    tmp+=U[k,i]*U[k,j]
+                U[i,j]=(A[i,j]-tmp)/U[i,i]
+        return U
 
