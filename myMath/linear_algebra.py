@@ -85,3 +85,27 @@ class linear_system_solver:
                 L[i,k]=(A[i,k]-tmp)/U[k,k]
         return L,U
 
+    def LU_solver(self, A, b):
+        L,U=self.LU(A)
+        n=A.shape[0] 
+        
+        y=np.zeros(n,dtype=np.double)
+        y[0]=b[0]
+        for i in range(1,n):
+            tmp=0.0
+            for k in range(i):
+                tmp+=L[i,k]*y[k]
+            y[i]=b[i]-tmp
+
+        x=np.zeros(n,dtype=np.double)
+        x[-1]=y[-1]/U[-1,-1]
+        for i in range(n-2,-1,-1):
+            tmp=0.0 
+            for k in range(i+1,n):
+                tmp+=U[i,k]*x[k]
+            x[i]=(y[i]-tmp)/U[i,i]
+
+        return x
+
+
+
