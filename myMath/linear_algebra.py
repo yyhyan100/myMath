@@ -124,4 +124,22 @@ class linear_system_solver:
                     tmp+=U[k,i]*U[k,j]
                 U[i,j]=(A[i,j]-tmp)/U[i,i]
         return U
+    
+    def chasing(self,a,b,c,y):
+        n=len(b)
+        u=np.empty(n,dtype=np.double)
+        v=np.empty(n-1,dtype=np.double)
+        x=np.empty(n,dtype=np.double)
+        u[0]=y[0]/b[0]
+        v[0]=c[0]/b[0]
+        for k in range(1,n-1):
+            tmp=b[k]-v[k-1]*a[k-1]
+            u[k]=(y[k]-u[k-1]*a[k-1])/tmp
+            v[k]=c[k]/tmp
+        k=n-1
+        x[-1]=(y[k]-u[k-1]*a[k-1])/(b[k]-v[k-1]*a[k-1])
+        for k in range(n-2,-1,-1):
+            x[k]=u[k]-v[k]*x[k+1]
+        return x
+
 
