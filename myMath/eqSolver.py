@@ -3,15 +3,19 @@ class solver_1d:
         self.tol=tol
 
     def bisection(self, f, a=0.0, b=1.0):
-        xm=(a+b)/2.0
-        err1=abs(f(xm))
-        while err1 > self.tol:
-            if f(a)*f(xm) <= 0.0:
-                b=xm
+        err=self.tol+1
+        xl=a 
+        xu=b
+        f_xl=f(xl) # fucntion value at x=xl
+        while err>=self.tol:
+            xm=(xl+xu)/2.0
+            f_xm=f(xm) # fucntion value at the midpoint
+            err=abs(f_xm)
+            if f_xl*f_xm < 0:
+                xu=xm 
             else:
-                a=xm 
-            xm=(a+b)/2.0   
-            err1=abs(f(xm))
+                xl=xm
+                f_xl=f_xm
         return xm
 
     def newton(self, f, fp,p0=0.0):

@@ -1,4 +1,5 @@
 import numpy as np
+from math import *
 class linear_system_solver:
     def __init__(self):
         pass
@@ -137,9 +138,27 @@ class linear_system_solver:
             u[k]=(y[k]-u[k-1]*a[k-1])/tmp
             v[k]=c[k]/tmp
         k=n-1
-        x[-1]=(y[k]-u[k-1]*a[k-1])/(b[k]-v[k-1]*a[k-1])
+        x[-1]=(y[k]-u[k-1]*a[k-tmp=np.sum(w*u1)/np.sum(w*u0)1])/(b[k]-v[k-1]*a[k-1])
         for k in range(n-2,-1,-1):
             x[k]=u[k]-v[k]*x[k+1]
         return x
+
+class eigen:
+    def power(self, A,u0=None,w=None,tol=0.00000001):
+        n=A.shape[0]
+        if u0 == None: u0=np.ones(n)
+        if w == None: w=np.ones(n)
+        err=tol+1
+        u1=np.matmul(A,u0)
+        lmd1=np.sum(w*u1)/np.sum(w*u0)
+
+        while err>=tol:
+            u0=u1.copy()
+            u1=np.matmul(A,u0)
+            tmp=np.sum(w*u1)/np.sum(w*u0)
+            err=abs(lmd1-tmp)
+            lmd1=tmp
+
+        return lmd1, u1/sqrt(np.sum(u1**2))
 
 
